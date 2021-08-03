@@ -11,10 +11,13 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" routerLink="auth/signup">Inscription</a>
+                <a class="nav-link" routerLink="auth/signup" *ngIf="!isAuth">Inscription</a>
             </li>
             <li class="nav-item" routerLinkActive="active">
-                <a class="nav-link" routerLink="auth/signin">Connexion</a>
+                <a class="nav-link" routerLink="auth/signin" *ngIf="!isAuth">Connexion</a>
+            </li>
+            <li class="nav-item" routerLinkActive="active">
+                <a class="nav-link" (click)="onSignOut()" style="cursor:pointer" *ngIf="isAuth">Déconnexion</a>
             </li>
         </ul>
     </div>

@@ -15,13 +15,23 @@ import { BooksService } from './services/books.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule} from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+
+// Connect to Firebase
+import { SETTINGS as AUTH_SETTINGS } from '@angular/fire/auth';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { environment } from '../environments/environment'
  
 const appRoutes: Routes =[
   {path: 'auth/signup', component: SignupComponent},
   {path: 'auth/signin', component: SigninComponent},
-  {path: 'books', component: BookListComponent},
-  {path: 'books/new', component: BookFormComponent},
-  {path: 'books/single-book/:id', component: SingleBookComponent}
+  {path: 'books', canActivate:[AuthGuardService], component: BookListComponent},
+  {path: 'books/new', canActivate:[AuthGuardService], component: BookFormComponent},
+  {path: 'books/single-book/:id', canActivate:[AuthGuardService], component: SingleBookComponent},
+  {path:'', redirectTo: 'books',pathMatch:'full'},
+  {path:'**', redirectTo: 'books'},
 ]
 
 @NgModule({
@@ -36,6 +46,11 @@ const appRoutes: Routes =[
   ],
   imports: [
     BrowserModule,
+    // 3. Initialize
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule, // firestore
+    AngularFireAuthModule, // auth
+    AngularFireStorageModule, // storage
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -43,6 +58,7 @@ const appRoutes: Routes =[
     RouterModule.forRoot(appRoutes)
   ],
   providers: [
+    { provide: AUTH_SETTINGS, useValue: { appVerificationDisabledForTesting: true } },
     AuthService,
     AuthGuardService,
     BooksService

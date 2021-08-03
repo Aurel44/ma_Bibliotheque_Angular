@@ -1,22 +1,26 @@
 import { Injectable } from '@angular/core';
-import firebase from 'firebase/app';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor() { }
+  constructor(public afs: AngularFirestore,   // Inject Firestore service
+              public fireAuthModule: AngularFireAuth, // Inject Firebase auth service
+              public router: Router,) { }
 
   createNewUser(email: string, password: string) {
     return new Promise<void>(
       (resolve, reject) => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+        this.fireAuthModule.createUserWithEmailAndPassword(email, password)
         .then(
           () => {
             resolve();
           },
-          (error) => {
+          (error: any) => {
             reject(error);
           }
         );
@@ -27,12 +31,12 @@ export class AuthService {
   signInUser(email: string, password: string) {
     return new Promise<void> (
       (resolve, reject) => {
-        firebase.auth().signInWithEmailAndPassword(email, password)
+        this.fireAuthModule.signInWithEmailAndPassword(email, password)
         .then(
           () => {
             resolve();
           },
-          (error) => {
+          (error: any) => {
             reject(error);
           }
         );
@@ -41,7 +45,7 @@ export class AuthService {
   }
 
   signOutUser(){
-    firebase.auth().signOut();
+    this.fireAuthModule.signOut();
   }
 }
 
